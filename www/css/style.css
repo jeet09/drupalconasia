@@ -8,3 +8,12 @@
     position: center;
    /* background-color: #42213D;*/
 }
+.timer {
+	position: absolute;
+    text-align: center;
+    margin-top: 52%;
+    padding-top: 60%;
+    right: 15%;
+    left: 10%;
+    color: #F9CB0C;
+}
