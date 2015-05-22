@@ -1,0 +1,10 @@
+.scroll-content {
+    background: url(../img/timer.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+ background-position: center top;
+    margin: auto;
+    z-index: 2;
+    position: center;
+   /* background-color: #42213D;*/
+}
