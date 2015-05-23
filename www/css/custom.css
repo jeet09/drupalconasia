@@ -1,0 +1,8 @@
+.bar.bar-stable {
+    border-color: #F88B21;
+	background-color: #321F33;
+}
+.bar.bar-stable .title {
+    color: #E38124;
+    font-weight: bold;
+}
