@@ -11,7 +11,8 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers'])
     // for form inputs)
     setTimeout(function() {
       $cordovaSplashscreen.hide()
-    }, 5000)
+       //navigator.splashscreen.hide();
+    }, 100);
 
     if(window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -21,4 +22,57 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers'])
     }
   });
 })
+.config(function($stateProvider, $urlRouterProvider) {
+  $stateProvider
+
+  .state('app', {
+      url: "/app",
+      abstract: true,
+      templateUrl: "templates/menu.html",
+      controller: 'ContentController'
+    })
+  .state('app.home', {
+      url: "/home",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/home.html",
+          controller: 'TimerCtrl'
+        }
+      }  
+    })
+  
+    .state('app.volunteer', {
+      url: "/volunteer",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/volunteer.html",
+          controller: 'VolunteerCtrl'
+        }
+
+      }
+    })
+     .state('app.camera', {
+      url: "/camera",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/camera.html",
+          controller: 'CamCtrl'
+        }
+
+      }
+    })
+    .state('app.video', {
+      cache:false,
+      url: "/video",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/video.html",
+          controller: 'VideoCtrl'
+        }
+
+      }
+    });
+  // if none of the above states are matched, use this as the fallback
+  $urlRouterProvider.otherwise('app/home');
+});
 

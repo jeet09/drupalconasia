@@ -1,8 +1,107 @@
 .bar.bar-stable {
-    border-color: #F88B21;
-	background-color: #321F33;
+    border-color: #f88b21;
+    background-color: #321f33;
 }
 .bar.bar-stable .title {
-    color: #E38124;
     font-weight: bold;
+
+    color: #e38124;
+}
+::-webkit-input-placeholder {
+    font-size: 14px;
+    font-weight: bold;
+
+    color: #090;
+}
+.item-input,
+textarea,
+.item-checkbox {
+    background-color: transparent;
+}
+.item-input input,
+.item-input textarea {
+    background-color: transparent;
+}
+::-moz-placeholder {
+    color: #f00;
+} /* firefox 19+ */
+
+
+
+
+
+
+
+
+.item-input input {
+    background-color: transparent;
+}
+
+.center {
+    width: 100px;
+    margin: 0 auto;
+
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+:-ms-input-placeholder {
+    color: #f00;
+} /* ie */
+
+
+
+
+
+
+
+
+
+
+
+input:-moz-placeholder {
+    color: #f00;
+}
+.mymenu {
+    color: #fff;
+    background-color: blue !important;
+}
+/*Set the background to transparent for ion-item*/
+
+.menu .item {
+    color: #f0f1f1;
+    border: none;
+    border-color: #00c;
+    border-top: 1px solid;
+    border-bottom: 2px solid;
+    background-color: transparent;
+}
+/*Changes the border for the last item*/
+
+.menu .item:last-child {
+    border-bottom: 1px solid #333;
+}
+/*Ion-item adds item-complex and an inner div, .item-content*/
+/* this needs to be transparent too, but doesnt need borders*/
+.menu .scroll-content {
+    background-color: #42213d;
+}
+.menu .item-complex .item-content,
+.menu .item-radio .item-content {
+    background-color: transparent;
+}
+/*Just makes the type white*/
+
+.menu h2,
+.menu h3,
+.menu p,
+.menu a {
+    color: #f0f1f1;
 }

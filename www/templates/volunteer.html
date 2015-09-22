@@ -1,0 +1,47 @@
+<ion-view title="Volunteer Registration">
+<ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+<div class="volunteer">
+<ion-content class="has-header" style="background:#F3E5F5; ">
+
+<form ng-submit="add()" ng-controller="VolunteerCtrl" name="volunteerfrm" novalidate >
+	<div class="list form-group" >
+	<label class="item item-input item-stacked-label"  for="fullName">
+			<span class="input-label">Full Name</span>
+			<input type="text" placeholder="John" ng-model="fullName" class="form-control" required="" name="fullName">
+			<span  style="color:red" ng-show="volunteerfrm.$submitted ">
+				<span ng-show="volunteerfrm.fullName.$error.required">Tell us your name.</span>
+			</span>
+		</label>
+		<label class="item item-input item-stacked-label">
+		<span class="input-label">Email</span>
+			<input type="email" placeholder="john@demo.com" ng-model="emails" class="form-control" name="email" required="">
+			<span style="color:red" ng-show="volunteerfrm.$submitted">
+				
+				<span ng-show="volunteerfrm.email.$error.required">Email is required.</span>
+				<span ng-show="volunteerfrm.email.$error.email">Invalid email address.</span>
+				
+			</span>
+		</label>
+		
+		<label class="item item-input item-stacked-label">
+		<span class="input-label">Drupal ID</span>
+			<input type="text" placeholder="johns" ng-model="drupalId" class="form-control">
+		</label>
+		
+		<label class="item item-input item-stacked-label" style="background-color:transparent;">
+		<span class="input-label">Interest Areas</span>
+			<textarea placeholder="Drupal, Javascript" ng-model="interestArea" class="form-control"></textarea>
+		</label>
+		<label class="item item-checkbox" style="padding-left:4%">
+			<input type="checkbox" ng-model="informed" value="on"> Keep me informed
+		</label>
+		<p>
+		<input type="submit" value="Submit"  style="width:100px;background-color: #ab47bc;"class="center button button-block button-positive center-block" ng-disabled=" volunteerfrm.email.$invalid || volunteerfrm.fullName.$invalid" style="">
+		</p>
+	</div>
+</form>
+</div>
+</ion-content>
+</ion-view>
