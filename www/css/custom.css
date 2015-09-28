@@ -27,7 +27,14 @@ textarea,
 } /* firefox 19+ */
 
 
+#rcorners2 {
 
+    padding: 20px; 
+    width: 100%;
+    height: 150px;
+    font-size: 18px;
+    color: #F29F4F;
+}
 
 
 
@@ -46,6 +53,14 @@ textarea,
 
 
 
+.slider-slide h3{
+            color:#fff;
+            margin-top:10px;
+        };
+        
+        .scroll{
+            height:100%;
+        };
 
 
 
@@ -104,4 +119,17 @@ input:-moz-placeholder {
 .menu p,
 .menu a {
     color: #f0f1f1;
+}
+#map {
+    width: 100%;
+    height: 200px;
+    margin: 10px auto;
+
+    box-shadow: 0 3px 25px black;
+}
+has-header.reach {
+    background-color: white;
+}
+.address {
+    text-align: center;
 }

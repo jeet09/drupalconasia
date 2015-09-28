@@ -51,12 +51,12 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers'])
 
       }
     })
-     .state('app.camera', {
-      url: "/camera",
+     .state('app.session', {
+      url: "/session",
       views: {
         'menuContent' :{
-          templateUrl: "templates/camera.html",
-          controller: 'CamCtrl'
+          templateUrl: "templates/session.html",
+          controller: 'SessionCtrl'
         }
 
       }
@@ -68,6 +68,17 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers'])
         'menuContent' :{
           templateUrl: "templates/video.html",
           controller: 'VideoCtrl'
+        }
+
+      }
+    })
+    .state('app.reach', {
+      cache:true,
+      url: "/reach",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/reach.html",
+          controller: 'MapCtrl'
         }
 
       }

@@ -1,10 +1,46 @@
 angular.module('starter.controllers', ['firebase', 'ngSanitize'])
     .value('volUrl', 'https://blistering-torch-4937.firebaseio.com/volunteer')
+    .value('sessUrl', 'https://sessionsapi.firebaseio.com/session')
     .factory("Volunteer", function(volUrl, $firebaseArray) {
         //var itemsRef = new Firebase("https://blistering-torch-4937.firebaseio.com/items");
         //return $firebaseArray(itemsRef);
         //console.log($firebaseArray(new Firebase(volUrl)));
+        
         return $firebaseArray(new Firebase(volUrl));
+    })
+
+    .factory("Session", function(sessUrl, $firebaseArray) {
+        return $firebaseArray(new Firebase(sessUrl));
+    })
+    .directive('map', function() {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+
+                var zValue = scope.$eval(attrs.zoom);
+                var lat = scope.$eval(attrs.lat);
+                var lng = scope.$eval(attrs.lng);
+
+
+                var myLatlng = new google.maps.LatLng(lat, lng),
+                    mapOptions = {
+                        zoom: zValue,
+                        center: myLatlng
+                    },
+                    map = new google.maps.Map(element[0], mapOptions),
+                    marker = new google.maps.Marker({
+                        position: myLatlng,
+                        map: map,
+                        draggable: false
+                    });
+                     google.maps.event.addListener(marker, 'dragend', function(evt) {
+                console.log('Current Latitude:', evt.latLng.lat(), 'Current Longitude:', evt.latLng.lng());
+            });
+
+            }
+
+        };
+
     })
     .controller('TimerCtrl', function($scope) {
         var timerId =
@@ -114,7 +150,7 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
     })
     .controller('VideoCtrl', ['$scope', '$sce', '$ionicPopup', '$state', '$ionicHistory',
         function($scope, $sce, $ionicPopup, $state, $ionicHistory) {
-console.log('connection',navigator);
+            console.log('connection', navigator);
 
             if (window.Connection) {
 
@@ -135,8 +171,8 @@ console.log('connection',navigator);
                             }
 
                         });
-                } else  {
-                    
+                } else {
+
                     $scope.video = undefined;
                     var urls = [{
                         "url": "https://www.youtube.com/embed/uKxNqXQhcnQ",
@@ -163,26 +199,41 @@ console.log('connection',navigator);
 
         }
     ])
-.controller("CamCtrl", function($scope, $cordovaCamera) {
- 
-    $scope.takePicture = function() {
-        var options = { 
-            quality : 75, 
-            destinationType : Camera.DestinationType.DATA_URL, 
-            sourceType : Camera.PictureSourceType.CAMERA, 
-            allowEdit : true,
-            encodingType: Camera.EncodingType.JPEG,
-            targetWidth: 300,
-            targetHeight: 300,
-            popoverOptions: CameraPopoverOptions,
-            saveToPhotoAlbum: false
-        };
- 
-        $cordovaCamera.getPicture(options).then(function(imageData) {
-            $scope.imgURI = "data:image/jpeg;base64," + imageData;
-        }, function(err) {
-            // An error occured. Show a message to the user
+    .controller("CamCtrl", function($scope, $cordovaCamera) {
+
+        $scope.takePicture = function() {
+            var options = {
+                quality: 75,
+                destinationType: Camera.DestinationType.DATA_URL,
+                sourceType: Camera.PictureSourceType.CAMERA,
+                allowEdit: true,
+                encodingType: Camera.EncodingType.JPEG,
+                targetWidth: 300,
+                targetHeight: 300,
+                popoverOptions: CameraPopoverOptions,
+                saveToPhotoAlbum: false
+            };
+
+            $cordovaCamera.getPicture(options).then(function(imageData) {
+                $scope.imgURI = "data:image/jpeg;base64," + imageData;
+            }, function(err) {
+                // An error occured. Show a message to the user
+            });
+        }
+
+    })
+    .controller('SessionCtrl', function($scope, sessUrl, Session) {
+        var ref = new Firebase(sessUrl);
+        ref.on("value", function(snapshot) {
+            //console.log(snapshot.val());
+            $scope.session = snapshot.val();
+        }, function(errorObject) {
+            console.log("The read failed: " + errorObject.code);
         });
-    }
- 
-});
+
+    })
+     .controller('MapCtrl', ['$scope',
+        function($scope) {
+            // Code will be here
+        }
+    ]);
