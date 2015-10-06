@@ -1,48 +1,36 @@
 angular.module('starter.controllers', ['firebase', 'ngSanitize'])
-    .value('volUrl', 'https://blistering-torch-4937.firebaseio.com/volunteer')
-    .value('sessUrl', 'https://sessionsapi.firebaseio.com/session')
-    .factory("Volunteer", function(volUrl, $firebaseArray) {
-        //var itemsRef = new Firebase("https://blistering-torch-4937.firebaseio.com/items");
-        //return $firebaseArray(itemsRef);
-        //console.log($firebaseArray(new Firebase(volUrl)));
-        
-        return $firebaseArray(new Firebase(volUrl));
-    })
 
-    .factory("Session", function(sessUrl, $firebaseArray) {
-        return $firebaseArray(new Firebase(sessUrl));
-    })
-    .directive('map', function() {
-        return {
-            restrict: 'A',
-            link: function(scope, element, attrs) {
+.directive('map', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
 
-                var zValue = scope.$eval(attrs.zoom);
-                var lat = scope.$eval(attrs.lat);
-                var lng = scope.$eval(attrs.lng);
+            var zValue = scope.$eval(attrs.zoom);
+            var lat = scope.$eval(attrs.lat);
+            var lng = scope.$eval(attrs.lng);
 
 
-                var myLatlng = new google.maps.LatLng(lat, lng),
-                    mapOptions = {
-                        zoom: zValue,
-                        center: myLatlng
-                    },
-                    map = new google.maps.Map(element[0], mapOptions),
-                    marker = new google.maps.Marker({
-                        position: myLatlng,
-                        map: map,
-                        draggable: false
-                    });
-                     google.maps.event.addListener(marker, 'dragend', function(evt) {
+            var myLatlng = new google.maps.LatLng(lat, lng),
+                mapOptions = {
+                    zoom: zValue,
+                    center: myLatlng
+                },
+                map = new google.maps.Map(element[0], mapOptions),
+                marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map,
+                    draggable: false
+                });
+            google.maps.event.addListener(marker, 'dragend', function(evt) {
                 console.log('Current Latitude:', evt.latLng.lat(), 'Current Longitude:', evt.latLng.lng());
             });
 
-            }
+        }
 
-        };
+    };
 
-    })
-    .controller('TimerCtrl', function($scope) {
+})
+.controller('TimerCtrl', function($scope) {
         var timerId =
             countdown(
                 new Date("February 1, 2016, 01:00:00"),
@@ -232,8 +220,54 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
         });
 
     })
-     .controller('MapCtrl', ['$scope',
+    .controller('MapCtrl', ['$scope',
         function($scope) {
             // Code will be here
         }
-    ]);
+    ])
+    .controller('PicCtrl', function($scope, $ionicLoading, $state, Flickr) {
+        $ionicLoading.show();
+
+        // Getting Photosets Detail from Flickr Service
+        Flickr.getPhotoSets().then(function(result) {
+            $scope.photoList = result.data.photosets.photoset;
+            console.log($scope.photoList);
+            $ionicLoading.hide();
+        });
+
+        // Opening Album
+        $scope.openAlbum = function(photoset_id) {
+            $state.go('app.album', {
+                id: photoset_id
+            });
+        };
+
+    })
+
+.controller('AlbumCtrl', function($scope, $ionicLoading, $stateParams, Flickr) {
+    $ionicLoading.show();
+    $scope.id = $stateParams.id;
+    $scope.photoList = [];
+
+    // Getting List of Photos from a Photoset
+    Flickr.getPhotos($scope.id).then(function(result) {
+        $ionicLoading.hide();
+
+        $scope.photos = result.data.photoset.photo;
+        $scope.title = result.data.photoset.title;
+
+        angular.forEach($scope.photos, function(photo, key) {
+            var id = photo.id;
+            var secret = photo.secret;
+            Flickr.getInfo(id, secret).then(function(result) {
+                $scope.photoList.push({
+                    sizes: result[0].data,
+                    info: result[1].data
+                });
+                console.log($scope.photoList);
+
+            });
+        });
+
+    });
+});
