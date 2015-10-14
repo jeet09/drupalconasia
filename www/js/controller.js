@@ -1,88 +1,182 @@
-angular.module('starter.controllers', ['firebase', 'ngSanitize'])
+/*(function() {
+    'use strict';
+    angular
+        .module('starter.controllers', [
+            'firebase',
+            'ngSanitize'
+        ])
 
-.directive('map', function() {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
+        .controller('TimerController', TimeController)
+        .controller('ContentController', ContentController)
+        .controller('SessionController', SessionController)
+        .controller('MapController', MapController)
+        .contoller('PictureController', PictureController)
 
-            var zValue = scope.$eval(attrs.zoom);
-            var lat = scope.$eval(attrs.lat);
-            var lng = scope.$eval(attrs.lng);
+    function TimerController() {
+        var vm = this;
+        vm.countDown = countDown;
 
-
-            var myLatlng = new google.maps.LatLng(lat, lng),
-                mapOptions = {
-                    zoom: zValue,
-                    center: myLatlng
-                },
-                map = new google.maps.Map(element[0], mapOptions),
-                marker = new google.maps.Marker({
-                    position: myLatlng,
-                    map: map,
-                    draggable: false
+        function countDown(ts) {
+            setTimeout(function() {
+                vm.$apply(function() {
+                    vm.times = ts.days + " Days " + ts.hours + "H: " + ts.minutes + "M: " + ts.seconds + "S"
                 });
-            google.maps.event.addListener(marker, 'dragend', function(evt) {
-                console.log('Current Latitude:', evt.latLng.lat(), 'Current Longitude:', evt.latLng.lng());
+            }, 1000);
+        }
+        var timerId =
+            countdown(new Date("February 1, 2016, 01:00:00"), countDown, countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS);
+    }
+
+
+    ContentController.$inject = ['$ionicSideMenuDelegate'];
+    function ContentController($ionicSideMenuDelegate) {
+        var vm = this;
+        vm.toggleLeftSideMenu = toggleLeftSideMenu;
+
+        function toggleLeftSideMenu() {
+            $ionicSideMenuDelegate.toggleLeft();
+        };
+    }
+
+    SessionController.$inject = ['sessUrl', 'Session'];
+    function SessionContoller(sessUrl, Session) {
+        var vm = this;
+        var ref = new Firebase(sessUrl);
+        ref.on("value", function(snapshot) {
+            //console.log(snapshot.val());
+            vm.session = snapshot.val();
+        }, function(errorObject) {
+            console.log("The read failed: " + errorObject.code);
+        });
+    }
+
+    function MapController() {}
+
+    PictureController.$inject = ['$ionicLoading', '$state', 'Flickr'];
+    function PictureController($ionicLoading, $state, Flickr) {
+        var vm = this;
+        vm.getPics = getPics;
+        vm.getPic = getPic;
+        var getPicInfo = getPicInfo;
+
+        vm.photoList = [];
+        $ionicLoading.show();
+
+        function getPics(result) {
+            console.log(result);
+            var photoList = result.data.photosets.photoset;
+            angular.forEach(photoList, function(value, key) {
+                Flickr.getPhotos(value.id).then(getPic);
+            });
+        }
+
+        function getPic(result) {
+            var photos = result.data.photoset.photo;
+            var result = result.data.photoset.title;
+            angular.forEach(photos, function(photo, key) {
+                var id = photo.id;
+                var secret = photo.secret;
+                Flickr.getInfo(id, secret).then(getPicInfo);
+            });
+        }
+
+        function getPicInfo(result) {
+            vm.photoList.push({
+                sizes: result[0].data,
+                info: result[1].data
+            });
+            $ionicLoading.hide();
+        }
+        Flickr.getPhotoSets().then(getPics);
+
+    //} rempve comment to work
+
+/*})();*/
+
+angular.module('starter.controllers', ['firebase', 'ngSanitize'])
+.controller('TimerCtrl', function($scope) {
+    var timerId =
+        countdown(
+            new Date("February 1, 2016, 01:00:00"),
+            function(ts) {
+                setTimeout(function() {
+                    $scope.$apply(function() {
+                        $scope.times = ts.days + " Days " + ts.hours + "H: " + ts.minutes + "M: " + ts.seconds + "S"
+                    });
+                }, 1000);
+            },
+            countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS);
+})
+
+.controller('ContentController', ['$scope', '$ionicSideMenuDelegate',
+    function($scope, $ionicSideMenuDelegate) {
+        $scope.toggleLeftSideMenu = function() {
+            $ionicSideMenuDelegate.toggleLeft();
+        };
+    }
+])
+
+.controller('VolunteerCtrl', function($scope, volUrl, Volunteer, $state, $ionicHistory, $ionicPopup) {
+    $scope.master = {};
+    var exists;
+    $scope.volunteer = Volunteer;
+    $scope.informed = false;
+    $scope.add = function() {
+        var fullName = $scope.fullName;
+        var email = $scope.emails;
+        checkIfUserExists(email);
+
+        function checkIfUserExists(email) {
+            var usersRef = new Firebase(volUrl);
+            usersRef.once("value", function(snapshot) {
+                snapshot.forEach(function(data) {
+
+                    console.log('data', data.child('email').val());
+
+                    exists = (data.child('email').val() != email);
+                    console.log('exist', exists);
+
+
+                });
+                userExistsCallback(email, exists);
             });
 
+
         }
 
-    };
-
-})
-.controller('TimerCtrl', function($scope) {
-        var timerId =
-            countdown(
-                new Date("February 1, 2016, 01:00:00"),
-                function(ts) {
-                    setTimeout(function() {
-                        $scope.$apply(function() {
-                            $scope.times = ts.days + " Days " + ts.hours + "H: " + ts.minutes + "M: " + ts.seconds + "S"
-                        });
-                    }, 1000);
-                },
-                countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS);
-    })
-    .controller('ContentController', ['$scope', '$ionicSideMenuDelegate',
-        function($scope, $ionicSideMenuDelegate) {
-            $scope.toggleLeftSideMenu = function() {
-                $ionicSideMenuDelegate.toggleLeft();
-            };
-        }
-    ])
-    .controller('VolunteerCtrl', function($scope, volUrl, Volunteer, $state, $ionicHistory, $ionicPopup) {
-        $scope.master = {};
-        var exists;
-        $scope.volunteer = Volunteer;
-        $scope.informed = false;
-        $scope.add = function() {
-            var fullName = $scope.fullName;
-            var email = $scope.emails;
-            checkIfUserExists(email);
-
-            function checkIfUserExists(email) {
-                var usersRef = new Firebase(volUrl);
-                usersRef.once("value", function(snapshot) {
-                    snapshot.forEach(function(data) {
-
-                        console.log('data', data.child('email').val());
-
-                        exists = (data.child('email').val() != email);
-                        console.log('exist', exists);
-
-
-                    });
-                    userExistsCallback(email, exists);
+        function userExistsCallback(email, exists) {
+            if (!exists) {
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Volunteer Registration',
+                    template: 'Email Id already Exists!'
                 });
-
-
-            }
-
-            function userExistsCallback(email, exists) {
-                if (!exists) {
+                alertPopup.then(function(res) {
+                    $ionicHistory.nextViewOptions({
+                        disableBack: true
+                    });
+                    $state.go('app.home');
+                    $scope.fullName = '';
+                    $scope.emails = '';
+                    $scope.drupalId = '';
+                    $scope.interestArea = '';
+                    $scope.informed = false;
+                    $scope.volunteerfrm.$setPristine();
+                });
+            } else {
+                var drupalId = $scope.drupalId;
+                var interestArea = $scope.interestArea;
+                var informed = $scope.informed;
+                var save = $scope.volunteer.$add({
+                    "fullName": fullName,
+                    "email": email,
+                    "drupalId": drupalId,
+                    "interestArea": interestArea,
+                    "informed": informed
+                });
+                if (save) {
                     var alertPopup = $ionicPopup.alert({
                         title: 'Volunteer Registration',
-                        template: 'Email Id already Exists!'
+                        template: 'Registered Successfully!'
                     });
                     alertPopup.then(function(res) {
                         $ionicHistory.nextViewOptions({
@@ -96,46 +190,18 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
                         $scope.informed = false;
                         $scope.volunteerfrm.$setPristine();
                     });
-                } else {
-                    var drupalId = $scope.drupalId;
-                    var interestArea = $scope.interestArea;
-                    var informed = $scope.informed;
-                    var save = $scope.volunteer.$add({
-                        "fullName": fullName,
-                        "email": email,
-                        "drupalId": drupalId,
-                        "interestArea": interestArea,
-                        "informed": informed
-                    });
-                    if (save) {
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Volunteer Registration',
-                            template: 'Registered Successfully!'
-                        });
-                        alertPopup.then(function(res) {
-                            $ionicHistory.nextViewOptions({
-                                disableBack: true
-                            });
-                            $state.go('app.home');
-                            $scope.fullName = '';
-                            $scope.emails = '';
-                            $scope.drupalId = '';
-                            $scope.interestArea = '';
-                            $scope.informed = false;
-                            $scope.volunteerfrm.$setPristine();
-                        });
 
-                    } else {
-                        alert('something went wrong');
-                    }
+                } else {
+                    alert('something went wrong');
                 }
             }
-
-
-
         }
 
-    })
+
+
+    }
+
+})
     .controller('VideoCtrl', ['$scope', '$sce', '$ionicPopup', '$state', '$ionicHistory',
         function($scope, $sce, $ionicPopup, $state, $ionicHistory) {
             console.log('connection', navigator);
@@ -187,87 +253,73 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
 
         }
     ])
-    .controller("CamCtrl", function($scope, $cordovaCamera) {
 
-        $scope.takePicture = function() {
-            var options = {
-                quality: 75,
-                destinationType: Camera.DestinationType.DATA_URL,
-                sourceType: Camera.PictureSourceType.CAMERA,
-                allowEdit: true,
-                encodingType: Camera.EncodingType.JPEG,
-                targetWidth: 300,
-                targetHeight: 300,
-                popoverOptions: CameraPopoverOptions,
-                saveToPhotoAlbum: false
-            };
+.controller('SessionCtrl', function($scope, sessUrl, Session) {
+    var ref = new Firebase(sessUrl);
+    ref.on("value", function(snapshot) {
+        //console.log(snapshot.val());
+        $scope.session = snapshot.val();
+    }, function(errorObject) {
+        console.log("The read failed: " + errorObject.code);
+    });
 
-            $cordovaCamera.getPicture(options).then(function(imageData) {
-                $scope.imgURI = "data:image/jpeg;base64," + imageData;
-            }, function(err) {
-                // An error occured. Show a message to the user
-            });
-        }
-
-    })
-    .controller('SessionCtrl', function($scope, sessUrl, Session) {
-        var ref = new Firebase(sessUrl);
-        ref.on("value", function(snapshot) {
-            //console.log(snapshot.val());
-            $scope.session = snapshot.val();
-        }, function(errorObject) {
-            console.log("The read failed: " + errorObject.code);
-        });
-
-    })
+})
     .controller('MapCtrl', ['$scope',
         function($scope) {
             // Code will be here
         }
     ])
-    .controller('PicCtrl', function($scope, $ionicLoading, $state, Flickr) {
-        $ionicLoading.show();
 
-        // Getting Photosets Detail from Flickr Service
-        Flickr.getPhotoSets().then(function(result) {
-            $scope.photoList = result.data.photosets.photoset;
-            console.log($scope.photoList);
-            $ionicLoading.hide();
-        });
-
-        // Opening Album
-        $scope.openAlbum = function(photoset_id) {
-            $state.go('app.album', {
-                id: photoset_id
-            });
-        };
-
-    })
-
-.controller('AlbumCtrl', function($scope, $ionicLoading, $stateParams, Flickr) {
-    $ionicLoading.show();
-    $scope.id = $stateParams.id;
+.controller('PicCtrl', function($scope, $ionicLoading, $state, Flickr) {
     $scope.photoList = [];
+    $ionicLoading.show();
 
-    // Getting List of Photos from a Photoset
-    Flickr.getPhotos($scope.id).then(function(result) {
-        $ionicLoading.hide();
+    function getPics(result) {
+        console.log(result);
+        var photoList = result.data.photosets.photoset;
+        angular.forEach(photoList, function(value, key) {
+            Flickr.getPhotos(value.id).then(getPic);
+        });
+    }
 
-        $scope.photos = result.data.photoset.photo;
-        $scope.title = result.data.photoset.title;
-
-        angular.forEach($scope.photos, function(photo, key) {
+    function getPic(result) {
+        var photos = result.data.photoset.photo;
+        var result = result.data.photoset.title;
+        angular.forEach(photos, function(photo, key) {
             var id = photo.id;
             var secret = photo.secret;
-            Flickr.getInfo(id, secret).then(function(result) {
-                $scope.photoList.push({
-                    sizes: result[0].data,
-                    info: result[1].data
-                });
-                console.log($scope.photoList);
-
-            });
+            Flickr.getInfo(id, secret).then(getPicInfo);
         });
+    }
 
-    });
+    function getPicInfo(result) {
+        $scope.photoList.push({
+            sizes: result[0].data,
+            info: result[1].data
+        });
+        $ionicLoading.hide();
+    }
+    Flickr.getPhotoSets().then(getPics);
+
+    /*Flickr.getPhotoSets().then(function(result) {
+            var photoList = result.data.photosets.photoset;
+            angular.forEach(photoList, function(value, key) {
+                Flickr.getPhotos(value.id).then(function(result) {
+                    var photos = result.data.photoset.photo;
+                    var result = result.data.photoset.title;
+                    angular.forEach(photos, function(photo, key) {
+                        var id = photo.id;
+                        var secret = photo.secret;
+                        Flickr.getInfo(id, secret).then(function(result) {
+                            $scope.photoList.push({
+                                sizes: result[0].data,
+                                info: result[1].data
+                            });
+                            $ionicLoading.hide();
+                        });
+                    })
+                })
+            });
+
+        });*/
 });
