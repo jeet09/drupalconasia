@@ -11,6 +11,7 @@
         .controller('SessionController', SessionController)
         .controller('MapController', MapController)
         .contoller('PictureController', PictureController)
+        .controller('VolunteerController', VolunteerController)
 
     function TimerController() {
         var vm = this;
@@ -29,6 +30,7 @@
 
 
     ContentController.$inject = ['$ionicSideMenuDelegate'];
+
     function ContentController($ionicSideMenuDelegate) {
         var vm = this;
         vm.toggleLeftSideMenu = toggleLeftSideMenu;
@@ -39,6 +41,7 @@
     }
 
     SessionController.$inject = ['sessUrl', 'Session'];
+
     function SessionContoller(sessUrl, Session) {
         var vm = this;
         var ref = new Firebase(sessUrl);
@@ -53,6 +56,7 @@
     function MapController() {}
 
     PictureController.$inject = ['$ionicLoading', '$state', 'Flickr'];
+
     function PictureController($ionicLoading, $state, Flickr) {
         var vm = this;
         vm.getPics = getPics;
@@ -89,24 +93,117 @@
         }
         Flickr.getPhotoSets().then(getPics);
 
-    //} rempve comment to work
+    }
 
-/*})();*/
+    VolunteerController.$inject = ['volUrl', 'Volunteer', '$state', '$ionicHistory', '$ionicPopup'];
+
+    function VolunteerController(volUrl, Volunteer, $state, $ionicHistory, $ionicPopup) {
+        var vm = this;
+        vm.master = {};
+        var exists;
+        vm.volunteer = Volunteer;
+        vm.informed = false;
+        vm.add = function() {
+            var fullName = vm.fullName;
+            var email = vm.emails;
+            checkIfUserExists(email);
+
+            function checkIfUserExists(email) {
+                var usersRef = new Firebase(volUrl);
+                usersRef.once("value", getSnapshot)
+
+            }
+
+            function getSnapshot(snapshot) {
+                snapshot.forEach(checkEmailExists) 
+                userExistsCallback(email, exists);
+            }
+
+            function checkEmailExists(data) {
+                console.log('data', data.child('email').val());
+
+                exists = (data.child('email').val() != email);
+                console.log('exist', exists);
+                return exists;
+
+            }
+
+            function userExistsCallback(email, exists) {
+                if (!exists) {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Volunteer Registration',
+                        template: 'Email Id already Exists!'
+                    });
+                    alertPopup.then(function(res) {
+                        $ionicHistory.nextViewOptions({
+                            disableBack: true
+                        });
+                        $state.go('app.home');
+                        vm.fullName = '';
+                        vm.emails = '';
+                        vm.drupalId = '';
+                        vm.interestArea = '';
+                        vm.informed = false;
+                        vm.volunteerfrm.$setPristine();
+                    });
+                } else {
+                    var drupalId = vm.drupalId;
+                    var interestArea = vm.interestArea;
+                    var informed = vm.informed;
+                    var save = vm.volunteer.$add({
+                        "fullName": fullName,
+                        "email": email,
+                        "drupalId": drupalId,
+                        "interestArea": interestArea,
+                        "informed": informed
+                    });
+                    if (save) {
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'Volunteer Registration',
+                            template: 'Registered Successfully!'
+                        });
+                        alertPopup.then(function(res) {
+                            $ionicHistory.nextViewOptions({
+                                disableBack: true
+                            });
+                            $state.go('app.home');
+                            vm.fullName = '';
+                            vm.emails = '';
+                            vm.drupalId = '';
+                            vm.interestArea = '';
+                            vm.informed = false;
+                            vm.volunteerfrm.$setPristine();
+                        });
+
+                    } else {
+                        alert('something went wrong');
+                    }
+                }
+            }
+
+
+
+        }
+
+
+    }
+
+})();*/
 
 angular.module('starter.controllers', ['firebase', 'ngSanitize'])
-.controller('TimerCtrl', function($scope) {
-    var timerId =
-        countdown(
-            new Date("February 1, 2016, 01:00:00"),
-            function(ts) {
-                setTimeout(function() {
-                    $scope.$apply(function() {
-                        $scope.times = ts.days + " Days " + ts.hours + "H: " + ts.minutes + "M: " + ts.seconds + "S"
-                    });
-                }, 1000);
-            },
-            countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS);
-})
+    .controller('TimerCtrl', function($scope) {
+        var timerId =
+            countdown(
+                new Date("February 1, 2016, 01:00:00"),
+                function(ts) {
+                    setTimeout(function() {
+                        $scope.$apply(function() {
+                            $scope.times = ts.days + " Days " + ts.hours + "H: " + ts.minutes + "M: " + ts.seconds + "S"
+                        });
+                    }, 1000);
+                },
+                countdown.DAYS | countdown.HOURS | countdown.MINUTES | countdown.SECONDS);
+    })
 
 .controller('ContentController', ['$scope', '$ionicSideMenuDelegate',
     function($scope, $ionicSideMenuDelegate) {
