@@ -120,11 +120,11 @@
         // Getting Info for each photo.
 
         result.getInfo = function(id, secret) {
-            sizes = Flickr_data.endpoint +
+            var sizes = Flickr_data.endpoint +
                 '?method=flickr.photos.getSizes&api_key=' + Flickr_data.key +
                 '&photo_id=' + id + '&format=json&nojsoncallback=1';
 
-            info = Flickr_data.endpoint +
+            var info = Flickr_data.endpoint +
                 '?method=flickr.photos.getInfo&api_key=' + Flickr_data.key +
                 '&photo_id=' + id + '&secret=' + secret +
                 '&format=json&nojsoncallback=1';

@@ -13,8 +13,10 @@
      <div class="col col-25" ng-repeat="photo in photoList">
 		  
 
-		  <div class="item item-image" style="min-height:50px">
-		    <img alt="{{photo.info.photo.title['_content']}}"zoom-view ng-src="{{photo.sizes.sizes.size[5].source}}">
+		  <div class="item item-image" style="min-height:50px" >
+		  	<a ng-click="openModal()">
+		    <img alt="{{photo.info.photo.title['_content']}} "zoom-view ng-src="{{photo.sizes.sizes.size[5].source}}">
+		    </a>
 		  </div>
 
 		  <div class="item item-text-wrap" ng-show="photo.info.photo.description['_content']" >
@@ -23,5 +25,22 @@
 		    </p>
 		  </div>
 		</div>
+
+
+
+
+		 <script id="open-pic.html" type="text/ng-template">
+              <div class="modal image-modal transparent-image" ng-click="closeModal()">
+                
+                 <ion-slide-box on-slide-changed="slideChanged(index)" show-pager="false">
+                  <ion-slide ng-repeat="photo in photoList">
+                    <img alt="{{photo.info.photo.title['_content']}} "zoom-view ng-src="{{photo.sizes.sizes.size[5].source}}" class="fullscreen-image">
+                    <p class="info">{{photo.info.photo.description['_content']}}</p>
+                  </ion-slide>
+                </ion-slide-box>
+                
+              </div>
+          </script>
+
 </ion-content>
 </ion-view>

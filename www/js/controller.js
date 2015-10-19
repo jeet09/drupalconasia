@@ -301,8 +301,6 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
 })
     .controller('VideoCtrl', ['$scope', '$sce', '$ionicPopup', '$state', '$ionicHistory',
         function($scope, $sce, $ionicPopup, $state, $ionicHistory) {
-            console.log('connection', navigator);
-
             if (window.Connection) {
 
                 if (navigator.connection.type == Connection.NONE) {
@@ -353,13 +351,20 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
 
 .controller('SessionCtrl', function($scope, sessUrl, Session) {
     var ref = new Firebase(sessUrl);
-    ref.on("value", function(snapshot) {
-        //console.log(snapshot.val());
-        $scope.session = snapshot.val();
-    }, function(errorObject) {
-        console.log("The read failed: " + errorObject.code);
-    });
 
+
+    $scope.doRefresh = function() {
+        ref.on("value", function(snapshot) {
+            //console.log(snapshot.val());
+            $scope.session = snapshot.val();
+        }, function(errorObject) {
+            console.log("The read failed: " + errorObject.code);
+        });
+        $scope.$broadcast('scroll.refreshComplete');
+
+
+    }
+    $scope.doRefresh();
 })
     .controller('MapCtrl', ['$scope',
         function($scope) {
@@ -367,7 +372,7 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
         }
     ])
 
-.controller('PicCtrl', function($scope, $ionicLoading, $state, Flickr) {
+.controller('PicCtrl', function($scope, $ionicLoading, $state, Flickr, $ionicModal, $ionicSlideBoxDelegate) {
     $scope.photoList = [];
     $ionicLoading.show();
 
@@ -397,6 +402,37 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
         $ionicLoading.hide();
     }
     Flickr.getPhotoSets().then(getPics);
+
+    $ionicModal.fromTemplateUrl('open-pic.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.modal = modal
+    })
+
+    $scope.openModal = function() {
+        $scope.modal.show();
+        $ionicSlideBoxDelegate.update();
+    }
+
+    $scope.closeModal = function() {
+        $scope.modal.hide();
+    };
+     $scope.next = function() {
+      $ionicSlideBoxDelegate.next();
+    };
+  
+    $scope.previous = function() {
+      $ionicSlideBoxDelegate.previous();
+    };
+  
+    // Called each time the slide changes
+    $scope.slideChanged = function(index) {
+      $scope.slideIndex = index;
+    };
+    $scope.$on('$destroy', function() {
+        $scope.modal.remove();
+    });
 
     /*Flickr.getPhotoSets().then(function(result) {
             var photoList = result.data.photosets.photoset;
