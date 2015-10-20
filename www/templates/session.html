@@ -1,22 +1,19 @@
-
 <ion-view title="Sessions">
-<ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  </ion-nav-buttons>
-<ion-content scroll="true" class="has-header" style="background-color:#42213D;">
- <ion-refresher
-    pulling-text="Pull to refresh..."
-    on-refresh="doRefresh()">
-  </ion-refresher>
-	<div ng-repeat='item in session'>
-		<p id='rcorners2'>
-		{{item.title}} <br /><br />
-		Speaker: {{item.user}}<br />
-		Experience Level: {{item.experience}}<br />
-		Status: {{item.status}}
-		</p>
-		<hr />
-	</div>  
-
-</ion-content>
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content scroll="true" class="has-header" style="background-color:#42213D;">
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()">
+        </ion-refresher>
+        <div ng-repeat='item in session'>
+            <p id='rcorners2'>
+                {{item.title}}
+                <br />
+                <br /> Speaker: {{item.user}}
+                <br /> Experience Level: {{item.experience}}
+                <br /> Status: {{item.status}}
+            </p>
+            <hr />
+        </div>
+    </ion-content>
 </ion-view>

@@ -214,66 +214,38 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
 ])
 
 .controller('VolunteerCtrl', function($scope, volUrl, Volunteer, $state, $ionicHistory, $ionicPopup) {
-    $scope.master = {};
-    var exists;
-    $scope.volunteer = Volunteer;
-    $scope.informed = false;
-    $scope.add = function() {
-        var fullName = $scope.fullName;
-        var email = $scope.emails;
-        checkIfUserExists(email);
+        $scope.master = {};
+        var exists;
+        $scope.volunteer = Volunteer;
+        $scope.informed = false;
+        $scope.add = function() {
+            var fullName = $scope.fullName;
+            var email = $scope.emails;
+            checkIfUserExists(email);
 
-        function checkIfUserExists(email) {
-            var usersRef = new Firebase(volUrl);
-            usersRef.once("value", function(snapshot) {
-                snapshot.forEach(function(data) {
+            function checkIfUserExists(email) {
+                var usersRef = new Firebase(volUrl);
+                usersRef.once("value", function(snapshot) {
+                    snapshot.forEach(function(data) {
 
-                    console.log('data', data.child('email').val());
+                        console.log('data', data.child('email').val());
 
-                    exists = (data.child('email').val() != email);
-                    console.log('exist', exists);
-
-
-                });
-                userExistsCallback(email, exists);
-            });
+                        exists = (data.child('email').val() != email);
+                        console.log('exist', exists);
 
 
-        }
-
-        function userExistsCallback(email, exists) {
-            if (!exists) {
-                var alertPopup = $ionicPopup.alert({
-                    title: 'Volunteer Registration',
-                    template: 'Email Id already Exists!'
-                });
-                alertPopup.then(function(res) {
-                    $ionicHistory.nextViewOptions({
-                        disableBack: true
                     });
-                    $state.go('app.home');
-                    $scope.fullName = '';
-                    $scope.emails = '';
-                    $scope.drupalId = '';
-                    $scope.interestArea = '';
-                    $scope.informed = false;
-                    $scope.volunteerfrm.$setPristine();
+                    userExistsCallback(email, exists);
                 });
-            } else {
-                var drupalId = $scope.drupalId;
-                var interestArea = $scope.interestArea;
-                var informed = $scope.informed;
-                var save = $scope.volunteer.$add({
-                    "fullName": fullName,
-                    "email": email,
-                    "drupalId": drupalId,
-                    "interestArea": interestArea,
-                    "informed": informed
-                });
-                if (save) {
+
+
+            }
+
+            function userExistsCallback(email, exists) {
+                if (!exists) {
                     var alertPopup = $ionicPopup.alert({
                         title: 'Volunteer Registration',
-                        template: 'Registered Successfully!'
+                        template: 'Email Id already Exists!'
                     });
                     alertPopup.then(function(res) {
                         $ionicHistory.nextViewOptions({
@@ -287,18 +259,46 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
                         $scope.informed = false;
                         $scope.volunteerfrm.$setPristine();
                     });
-
                 } else {
-                    alert('something went wrong');
+                    var drupalId = $scope.drupalId;
+                    var interestArea = $scope.interestArea;
+                    var informed = $scope.informed;
+                    var save = $scope.volunteer.$add({
+                        "fullName": fullName,
+                        "email": email,
+                        "drupalId": drupalId,
+                        "interestArea": interestArea,
+                        "informed": informed
+                    });
+                    if (save) {
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'Volunteer Registration',
+                            template: 'Registered Successfully!'
+                        });
+                        alertPopup.then(function(res) {
+                            $ionicHistory.nextViewOptions({
+                                disableBack: true
+                            });
+                            $state.go('app.home');
+                            $scope.fullName = '';
+                            $scope.emails = '';
+                            $scope.drupalId = '';
+                            $scope.interestArea = '';
+                            $scope.informed = false;
+                            $scope.volunteerfrm.$setPristine();
+                        });
+
+                    } else {
+                        alert('something went wrong');
+                    }
                 }
             }
+
+
+
         }
 
-
-
-    }
-
-})
+    })
     .controller('VideoCtrl', ['$scope', '$sce', '$ionicPopup', '$state', '$ionicHistory',
         function($scope, $sce, $ionicPopup, $state, $ionicHistory) {
             if (window.Connection) {
@@ -306,9 +306,9 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
                 if (navigator.connection.type == Connection.NONE) {
 
                     $ionicPopup.alert({
-                        title: "Internet Disconnected",
-                        content: "The internet is disconnected on your device."
-                    })
+                            title: "Internet Disconnected",
+                            content: "The internet is disconnected on your device."
+                        })
                         .then(function(result) {
                             if (result) {
 
@@ -350,22 +350,22 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
     ])
 
 .controller('SessionCtrl', function($scope, sessUrl, Session) {
-    var ref = new Firebase(sessUrl);
+        var ref = new Firebase(sessUrl);
 
 
-    $scope.doRefresh = function() {
-        ref.on("value", function(snapshot) {
-            //console.log(snapshot.val());
-            $scope.session = snapshot.val();
-        }, function(errorObject) {
-            console.log("The read failed: " + errorObject.code);
-        });
-        $scope.$broadcast('scroll.refreshComplete');
+        $scope.doRefresh = function() {
+            ref.on("value", function(snapshot) {
+                console.log(snapshot.val());
+                $scope.session = snapshot.val();
+            }, function(errorObject) {
+                console.log("The read failed: " + errorObject.code);
+            });
+            $scope.$broadcast('scroll.refreshComplete');
 
 
-    }
-    $scope.doRefresh();
-})
+        }
+        $scope.doRefresh();
+    })
     .controller('MapCtrl', ['$scope',
         function($scope) {
             // Code will be here
@@ -418,17 +418,17 @@ angular.module('starter.controllers', ['firebase', 'ngSanitize'])
     $scope.closeModal = function() {
         $scope.modal.hide();
     };
-     $scope.next = function() {
-      $ionicSlideBoxDelegate.next();
+    $scope.next = function() {
+        $ionicSlideBoxDelegate.next();
     };
-  
+
     $scope.previous = function() {
-      $ionicSlideBoxDelegate.previous();
+        $ionicSlideBoxDelegate.previous();
     };
-  
+
     // Called each time the slide changes
     $scope.slideChanged = function(index) {
-      $scope.slideIndex = index;
+        $scope.slideIndex = index;
     };
     $scope.$on('$destroy', function() {
         $scope.modal.remove();

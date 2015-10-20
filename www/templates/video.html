@@ -1,17 +1,13 @@
-
 <ion-view title="Places to visit">
-<ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  </ion-nav-buttons>
-<ion-content scroll="false" class="has-header" style="background-color:#42213D;">
-  
-  <div ng-if="video" class="video-container">
-   <iframe ng-src="{{video}}"  ng-src="{{video}}" frameborder="0"></iframe>
-
-</div>
-<div >
-	<p class="video_text">{{videotext}}</p>
-</div>
-
-</ion-content>
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content scroll="false" class="has-header" style="background-color:#42213D;">
+        <div ng-if="video" class="video-container">
+            <iframe ng-src="{{video}}" ng-src="{{video}}" frameborder="0"></iframe>
+        </div>
+        <div>
+            <p class="video_text">{{videotext}}</p>
+        </div>
+    </ion-content>
 </ion-view>

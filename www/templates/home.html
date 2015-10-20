@@ -1,27 +1,22 @@
-
 <ion-view title="Home">
-<ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  </ion-nav-buttons>
-<ion-content scroll="false" class="has-header homepage">
- 
-<div class="timer">
-  {{times}}
-</div>
-
-<div class="land-1">
-  <div class="land-img">
-    <img src="img/logo.png" width="250px" height="250px">
-  </div>
-  <div class="time-wrap">
-    <div class="land-timer " ng-controller="TimerCtrl">
-      
-      {{times}}
-      
-    </div>
-  </div>
-  <div>
-  </div>
-</div>
-</ion-content>
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content scroll="false" class="has-header homepage">
+        <div class="timer">
+            {{times}}
+        </div>
+        <div class="land-1">
+            <div class="land-img">
+                <img src="img/logo.png" width="250px" height="250px">
+            </div>
+            <div class="time-wrap">
+                <div class="land-timer " ng-controller="TimerCtrl">
+                    {{times}}
+                </div>
+            </div>
+            <div>
+            </div>
+        </div>
+    </ion-content>
 </ion-view>
